@@ -83,7 +83,7 @@ def opennode_create_charge(request):
 
 ### Signal:
 
-Subscribe to `opennode.signals.opennode_charge_event_received` to be notified of opennode charges. 
+Subscribe to `opennode.signals.opennode_charge_event_received` to be notified of opennode webhook events. 
 
 ```python
 from django.dispatch import receiver
@@ -92,14 +92,18 @@ from opennode.signals import opennode_charge_event_received
 @receiver(opennode_charge_event_received)
 def opennode_received(sender, **_):
     charge = sender.charge
-
-    if charge.status != 'paid':
-        print(f'ignoring')
-        return
-        
+    
+    status = charge.status
     order_id = charge.order_id
     created_at = charge.created_at
     fiat_value = charge.source_fiat_value
+
+    print(f'Opennode event received - {order_id} - {status}- {created_at} - {fiat_value}')
     
-    print(f'Opennode charge paid! - {order_id} - {created_at} - {fiat_value}')
+    if charge.status != 'paid':
+        print(f'Charge {order_id} is not paid - ignoring')
+        return
+    
+    print(f'Charge {order_id} is paid! - processing')    
+    ...
 ```
