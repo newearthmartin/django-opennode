@@ -9,7 +9,9 @@ from .models import OpennodeCharge
 logger = logging.getLogger(__name__)
 
 
-def create_charge(order_id, amount, currency, callback_url, description=None, customer_email=None, customer_name=None, notif_email=None, success_url=None, ttl=10):
+def create_charge(order_id, amount, currency, callback_url,
+                  description=None, customer_email=None, customer_name=None,
+                  notif_email=None, success_url=None, ttl=10):
     data = {
         "order_id": order_id,
         "amount": amount,
