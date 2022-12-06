@@ -1,6 +1,10 @@
 # django-opennode
 Django app for receiving payments with OpenNode
 
+## Status:
+
+I'm using this library to receive payments on my projects. It is not complete but does the job. Contributions are welcome.
+
 ## Usage:
 
 ### Settings:
@@ -50,10 +54,9 @@ urlpatterns = [
 
 ### Creating a charge
 
-To create a charge call the `opennode.api.create_charge` method. You need to unpack the result into `charge` and `error`. 
-If there is no error, you can redirect to OpenNode's hosted checkout URL.
+To create a charge, you need to call the `opennode.api.create_charge` method. You need to unpack the result of `opennode.api.create_charge` into `charge` and `error`. If error is `None`, you can send the user to the `hosted_checkout_url`, which is hosted by OpenNode.
 
-You need to hook `opennode_charge_webhooks` from `django-opennode` into the webhooks_url and optionally provide a `success_url`.
+This is an example of a view that creates the charge and redirects to OpenNode's hosted checkout page:
 
 ```python
 from opennode.api import create_charge
@@ -83,7 +86,9 @@ def opennode_create_charge(request):
 
 ### Signal:
 
-Subscribe to `opennode.signals.opennode_charge_event_received` to be notified of opennode webhook events. 
+OpenNode will use the `opennode_charge_webhooks` URL to notify you of changes to charges. This view will trigger the signal `opennode.signals.opennode_charge_event_received` which you can subscribe to. 
+
+There are many state changes and not all webhooks mean that a charge has been paid. You must check that the charge `status` is `"paid"`:
 
 ```python
 from django.dispatch import receiver
