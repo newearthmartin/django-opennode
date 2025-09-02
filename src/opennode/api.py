@@ -33,6 +33,7 @@ def create_charge(order_id, amount, currency, callback_url,
     response = requests.post(f'{settings.OPENNODE_ENDPOINT }/v1/charges', json=data, headers=headers)
     data = response.json()
     if response.status_code != 200:
+        logger.error(f'OpenNode API returned {response.status_code}: {data}')
         return None, data.get('message', f'error {response.status_code}')
 
     data = data['data']
