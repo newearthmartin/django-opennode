@@ -14,7 +14,9 @@ def create_charge(order_id, amount, currency, callback_url,
                   notif_email=None, success_url=None, ttl=10):
     data = {
         "order_id": order_id,
-        "amount": amount,
+        # Payment prices are Decimal values in both host applications, while requests' JSON
+        # encoder only accepts native JSON scalars. OpenNode accepts its fiat amount as text.
+        "amount": str(amount),
         "description": description,
         "currency": currency,
         "callback_url": callback_url,
